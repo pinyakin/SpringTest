@@ -6,12 +6,20 @@
   <bean id="client" class="com.yet.spring.core.beans.Client">
     <constructor-arg index="0" value="1"/>
     <constructor-arg index="1" value="John Smith"/>
+    <property name="greeting" value="Hello there!"/>
   </bean>
 
-  <bean id="eventLogger" class="com.yet.spring.core.loggers.ConsoleEventLogger"/>
+  <bean id="consoleEventLogger" class="com.yet.spring.core.loggers.ConsoleEventLogger"/>
+
   <bean id="app" class="com.yet.spring.core.App">
     <constructor-arg ref="client"/>
-    <constructor-arg ref="eventLogger"/>
+    <constructor-arg ref="consoleEventLogger"/>
+    <constructor-arg>
+      <map>
+        <entry key="INFO" value-ref="consoleEventLogger"/>
+        <entry key="ERROR" value-ref="combinedEventLogger"/>
+      </map>
+    </constructor-arg>
   </bean>
 
   <bean id="event" class="com.yet.spring.core.beans.Event" scope="prototype">
@@ -31,4 +39,15 @@
     destroy-method="destroy" parent="fileEventLogger">
     <constructor-arg value="10"/>
   </bean>
+  
+  <bean id="combinedEventLogger" class="com.yet.spring.core.loggers.CombinedEventLogger">
+    <constructor-arg>
+      <list>
+        <ref bean="fileEventLogger"/>
+        <ref bean="consoleEventLogger"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+
 </beans>
